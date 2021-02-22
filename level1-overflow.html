@@ -1,8 +1,44 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  </head>
+    <script>
+    AFRAME.registerComponent('text_animation', {
+      init: function () {
+        this.entities = document.querySelectorAll('a-box');
+        //console.log("init")
+      },
+      
+      tick: function () {
+        //console.log("tick")
+        // Don't call query selector in here, query beforehand.
+        for (let i = 0; i < this.entities.length; i++) {
+          var el = this.entities[i]
+          
+          /*
+          el.opacity = el.opacity || 1
+          el.setAttribute('opacity', Math.round(Math.random() * 20));
+*/
+
+          var position = el.getAttribute('position')
+          var direction = el.getAttribute('direction') || ((+new Date() % 10 * -1 ) * -1);
+          el.setAttribute('direction', direction);
+
+          var value = Math.random() / 10;
+          // console.log(value, !(Math.round(value * 100) % 3))
+          // if (/*position.y > 10 &&*/ !(Math.round(value * 1000) % 99) /*&& +new Date() % 20*/) direction *= -1;
+          // el.setAttribute('direction', direction);
+          if (Math.abs(position.y) > 30) position.y *= -1;
+
+          position.y += value * direction
+
+          //el.opacity -= 0.1
+        }
+      }
+    });
+  </script> 
+   </head>
   <body>
+
     <a-scene inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
       <a-assets>
         <img id="floor_grid" src="img/grid_hex.jpg">
@@ -36,6 +72,10 @@
         <a-box position="25.8185 6.26281 -40.87866" rotation="-0.04984732817638162 36.91509778248381 0.19996227050065735" opacity="0.9" color="#4CC3D9" material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
       </a-entity>
 
+      <a-entity id="overbuffs1" visible="">
+        <a-text>
+      </a-entity>
+
 
 
       <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" material="" geometry=""></a-sphere>
@@ -43,6 +83,12 @@
       <a-plane src="#floor_grid" position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4" material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="" id="" scale="20 20 1"></a-plane>
 
       <a-entity camera="" position="27.98897 1.6 -34.22068" wasd-controls="" rotation="0.67992 140.66820000000001 0" look-controls="" aframe-injected="" data-aframe-inspector-original-camera=""></a-entity>
+
+
+      <a-entity id="fans" position="0 0 -80" text_animation></a-entity>
+
+
+
       <div class="a-loader-title" style="display: none;"></div>
     </a-scene>
   </body>
