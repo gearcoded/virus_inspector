@@ -30,7 +30,7 @@
     function generate_text(number){
       var cryptic = document.querySelector('#cryptic');
       var base_element = `
-      <a-text value="0xooeseoeerokposoorgreegrrreggrseggrorraokrgarggeseahpoeeehrrrorkr" position="0 -10 0" side="double" width="5" text="" geometry="primitive: circle; radius: 0; segments: 24" rotation="0 2129.000000000054 90" color="#A38E64" direction="-1" speed="0.14967379999742117"></a-text>
+      <a-text class=cryptic_block value="0xooeseoeerokposoorgreegrrreggrseggrorraokrgarggeseahpoeeehrrrorkr" position="0 -10 0" side="double" width="5" text="" geometry="primitive: circle; radius: 0; segments: 24" rotation="0 2129.000000000054 90" color="#A38E64" direction="-1" speed="0.14967379999742117"></a-text>
       `
       var array = [];
       for (let i = 0; i < number; i++) {
@@ -40,6 +40,52 @@
 
     }
 
+    AFRAME.registerComponent('cursor-listener', {
+  init: function () {
+    var lastIndex = -1;
+    var COLORS = ['red', 'green', 'blue'];
+    this.el.addEventListener('click', function (evt) {
+      lastIndex = (lastIndex + 1) % COLORS.length;
+      this.setAttribute('material', 'color', COLORS[lastIndex]);
+      console.log('I was clicked at: ', evt.detail.intersection.point);
+    });
+  }
+});
+
+navigator.xr.addEventListener('sessiongranted', function (evt) {
+   // One could check for the type of session granted.
+   // Events notifies of session creation after navigation, UA action, or requestSession.
+   // The session object is provided as part of this event.
+   if (evt.session.mode === 'immersive-vr') {
+      // set up app state for immersive vr, if that's what the app wants
+   } else {
+      // notify user that this app only works in immersive vr mode, if desired
+   }
+})
+
+function open_link(link){
+  if (link == 'level1' && prompt(`Open ${link}?`)){
+    window.location.href=level1-overflow.html
+  }
+  
+}
+
+function change_intro_message(){
+  var text = [
+  "Hello Seal. You are a program.\nYou have pseudo AI capabilities.",
+  "Probably your features have not yet\nbeen activated. But that was\nnecessary to survive antivirus checks",
+  "Your goal is to observe other\nprograms. When all your features\n are activated, you will have a new goal."
+  ]
+  var el = document.querySelector(".welcome_text");
+  var index = el.attributes.array_text.nodeValue
+  index = (index + 1) % text.length;
+  el.attributes.array_text.nodeValue = index;
+  console.log(index)
+
+  el.attributes.value.nodeValue = text[index]
+
+
+}
 
 
     AFRAME.registerComponent('text_animation', {
@@ -47,7 +93,7 @@
       init: function () {
         generate_text(100)
 
-        this.cryptic_elements = document.querySelectorAll('a-text');
+        this.cryptic_elements = document.querySelectorAll('.cryptic_block');
         this.first = true;
 
         for (let i = 0; i < this.cryptic_elements.length; i++) {
@@ -136,14 +182,11 @@
   <a-scene inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
     <a-assets>
       <img id="floor_grid" src="img/grid_hex.jpg">
+      <img id="level1Thumb" src="level1Thumb.jpg">
+
     </a-assets>
 
     <a-sky color="#cfe6e8"></a-sky>
-    <a-text value="Ϗϐϑϖϗ"
-    font="DejaVuSans-msdf.json"
-    color="#33C3F0"
-    negate="false">
-</a-text>
 
     <a-entity id="computer blocks" visible="">
       <a-box position="34.13002 1.4 -24.76631" rotation="-0.04984732817638162 -89.40605322559905 0.19996227050065732"
@@ -154,10 +197,15 @@
       <!-- <a-text value="q" position="0 2 0" side="double" width=10></a-text> -->
        </a-entity>
 
-    <a-entity id="welcome" visible="">
-      <!-- <a-text value="q" position="0 2 0" side="double" width=10></a-text> -->
-      <a-text value="0x#ABF" position="0 2 0"
-        side="double" width="5" text="" geometry="primitive: circle; radius: 0; segments: 24"></a-text>
+       <a-entity id="welcome" visible="" position="-0.07 2 -2">
+        <!-- <a-text value="q" position="0 2 0" side="double" width=10></a-text> -->
+        <a-text onclick=change_intro_message() class='welcome_text' value="" array_text = 2 position="0 0 0" side="double" width="4" text="align: center; color: #ffffff" geometry="width: 3.62; depth: 0" material="opacity: 0.45; side: double; transparent: true; color: #787878;"></a-text>
+        <a-entity geometry="primitive: tetrahedron; radius: 0.22" rotation="-35 120 -45" position="-1.66 -0.371 0.131" material="opacity: 0.9; color: #67dc18" animation="property: rotation; from: -35 0 -45; to: -35 120 -45; dur: 3000; easing: linear; loop: true"></a-entity>
+      </a-entity>
+
+      <!-- <a-box position="-1 1.6 -5" animation="property: position; to: 1 8 -10; dur: 2000; easing: linear; loop: true" color="tomato"></a-box> -->
+      <a-entity rotation="0 0 0" animation="property: rotation; to: 0 360 0; easing: linear; loop: true; dur: 10000">
+        <a-sphere position="5 0 0" color="mediumseagreen"></a-sphere>
 </a-entity>
 
 
@@ -169,7 +217,26 @@
       look-controls="" aframe-injected="" data-aframe-inspector-original-camera=""></a-entity> -->
 
 
+
+      
+
+      <!--Controls  -->
     <a-entity id="fans" position="0 0 -80" text_animation></a-entity>
+
+    <a-entity position="2 2 -37" onclick="open_link('level1')"" link="href: level1-overflow.html; title: Level 1; image: #level1Thumb; visualAspectEnabled:true; highlightedColor: #ffcf24; backgroundColor: #000000; borderColor: #3700ff; on: 'click';"></a-entity>
+    <!-- <a-box geometry="primitive: box" material="color: blue" position="2 2 -30"></a-entity> -->
+
+    <a-entity position="0 0 0" wasd-controls="" rotation="0 0 0"
+      look-controls="" aframe-injected="" data-aframe-inspector-original-camera="">
+      <a-entity cursor="fuse: true; fuseTimeout: 500"
+        position="0 2 -1"
+        geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+        material="color: black; shader: flat">
+      </a-entity>
+
+    </a-entity>
+
+    <a-entity id="box" cursor-listener geometry="primitive: box" material="color: blue"></a-entity>
 
 
 
