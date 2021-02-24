@@ -1,0 +1,180 @@
+<html>
+
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script>
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    function getRandomText() {
+      // var letters = 'ϏϐϑϖϗϘϙϚϛϜϝϞϟϠϡϰϱϴϵ϶ϷϸϻϼϽϾϿἇᾯᾚᾈᾠ𐆂𐅊𐅋𐅌𐅍𐅎𐅏𐅐𐅑𐅒𐅓𐅔𐅕𐅖𐅗𐅘𐅙𐅚𐅛𐅜𐅝𐅞𐅟𐅠𐅡𐅢𐅣𐅤𐅥𐅦𐅧𐅨𐅩𐅪𐅫𐅬𐅭𐅮𐅯𐅰𐅱𐅲𐅳𐅴𐅵𐅶𐅷𐅸𐅹𐅺𐅻𐅼𐅽𐅾𐅿𐆀𐆁𐆃𐆄𐆅𐆆𐆇𐆈𐆉𐆊𐆋𐆌𐆍𐆎𐆠𝈀𝈁𝈂𝈃𝈄𝈅𝈆𝈇𝈈𝈉𝈊𝈋𝈌𝈍𝈎𝈏𝈐𝈑𝈒𝈓𝈔𝈕𝈖𝈗𝈘𝈙𝈚𝈛𝈜𝈝𝈞𝈟𝈠𝈡𝈢𝈣𝈤𝈥𝈦𝈧𝈨𝈩';
+      var letters = 'repoakrgeorkghoesrkrgoerger';
+      var text = '0x';
+      for (var i = 0; i < 64; i++) {
+        text += letters[Math.floor(Math.random() * letters.length)];
+      }
+      return text;
+    }
+
+    function random(max){
+      max = max || 40;
+      return Math.round(Math.random() * 100 % max)
+    }
+
+    function generate_text(number){
+      var cryptic = document.querySelector('#cryptic');
+      var base_element = `
+      <a-text value="0xooeseoeerokposoorgreegrrreggrseggrorraokrgarggeseahpoeeehrrrorkr" position="0 -10 0" side="double" width="5" text="" geometry="primitive: circle; radius: 0; segments: 24" rotation="0 2129.000000000054 90" color="#A38E64" direction="-1" speed="0.14967379999742117"></a-text>
+      `
+      var array = [];
+      for (let i = 0; i < number; i++) {
+        array.push(base_element)
+      }
+      cryptic.innerHTML = array.join('\n');
+
+    }
+
+
+
+    AFRAME.registerComponent('text_animation', {
+
+      init: function () {
+        generate_text(100)
+
+        this.cryptic_elements = document.querySelectorAll('a-text');
+        this.first = true;
+
+        for (let i = 0; i < this.cryptic_elements.length; i++) {
+          var el = this.cryptic_elements[i]
+          el.setAttribute('position', `${random()} -20 ${random()}`);
+
+          el.setAttribute('rotation', "0 0 90");
+          el.setAttribute('color', getRandomColor());
+          var new_value = getRandomText()
+          console.log(new_value)
+          el.setAttribute('value', new_value);
+
+          // el.setAttribute('font', "DejaVuSans-msdf.json");
+        }
+
+
+        //console.log("init")
+      },
+
+      tick: function () {
+        //console.log("tick")
+        // Don't call query selector in here, query beforehand.
+        for (let i = 0; i < this.cryptic_elements.length; i++) {
+          var el = this.cryptic_elements[i]
+          if (this.first) {
+            
+            this.first = false;
+          }
+
+          /*
+          el.opacity = el.opacity || 1
+          el.setAttribute('opacity', Math.round(Math.random() * 20));
+*/
+
+          function random_direction() {
+            return !!((Math.abs(+new Date() % 4 * -1) % 2) * -1)
+          }
+
+          var direction = el.getAttribute('direction')
+          // console.log("direction",direction)
+          if (!direction) {
+            direction = 1
+            if (random_direction()) direction = -1;
+          }
+
+          el.setAttribute('direction', direction);
+
+          var value = Math.random() * 10;
+          // console.log(value, !(Math.round(value * 100) % 3))
+          // if (/*position.y > 10 &&*/ !(Math.round(value * 1000) % 99) /*&& +new Date() % 20*/) direction *= -1;
+          // el.setAttribute('direction', direction);
+          var speed = el.getAttribute('speed')
+          if (!speed) speed = Math.random() / 10 + 0.1;
+          el.setAttribute('speed', speed);
+
+          var position = el.getAttribute('position')
+          if (Math.abs(position.y) > 30) {
+            position.y *= -1;
+            if (random_direction()) {
+              // direction = 1;
+              // position.y = 20;
+              // console.log(direction, speed, position.y, )
+              // el.setAttribute('direction', direction);
+              speed = Math.random() / 10 + 0.1;
+              el.setAttribute('speed', speed);
+            }
+          }
+          position.y += speed * direction;
+
+          el.setAttribute('position', position);
+
+          var rotation = el.getAttribute('rotation');
+          rotation.y += random(5);
+          el.setAttribute('rotation', rotation);
+
+
+          //el.opacity -= 0.1
+        }
+      }
+    });
+  </script>
+</head>
+
+<body>
+
+  <a-scene inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
+    <a-assets>
+      <img id="floor_grid" src="img/grid_hex.jpg">
+    </a-assets>
+
+    <a-sky color="#cfe6e8"></a-sky>
+    <a-text value="Ϗϐϑϖϗ"
+    font="DejaVuSans-msdf.json"
+    color="#33C3F0"
+    negate="false">
+</a-text>
+
+    <a-entity id="computer blocks" visible="">
+      <a-box position="34.13002 1.4 -24.76631" rotation="-0.04984732817638162 -89.40605322559905 0.19996227050065732"
+        opacity="0.7" color="#4CC3D9" material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
+   
+    </a-entity>
+    <a-entity id="cryptic" visible="" position="-23.76867 0 -29.83805">
+      <!-- <a-text value="q" position="0 2 0" side="double" width=10></a-text> -->
+       </a-entity>
+
+    <a-entity id="welcome" visible="">
+      <!-- <a-text value="q" position="0 2 0" side="double" width=10></a-text> -->
+      <a-text value="0x#ABF" position="0 2 0"
+        side="double" width="5" text="" geometry="primitive: circle; radius: 0; segments: 24"></a-text>
+</a-entity>
+
+
+
+<a-plane src="#floor_grid" position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"
+      material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="" id="" scale="20 20 1"></a-plane>
+
+    <!-- <a-entity camera="" position="27.98897 1.6 -34.22068" wasd-controls="" rotation="0.67992 140.66820000000001 0"
+      look-controls="" aframe-injected="" data-aframe-inspector-original-camera=""></a-entity> -->
+
+
+    <a-entity id="fans" position="0 0 -80" text_animation></a-entity>
+
+
+
+    <div class="a-loader-title" style="display: none;"></div>
+  </a-scene>
+</body>
+
+</html>
