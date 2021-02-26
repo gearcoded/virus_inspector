@@ -390,11 +390,60 @@
     </a-entity>
 
 
+<!-- inactive boss here. save it for the next levels -->
+    <a-sphere class='boss' position="0 1.25 -5" radius="1.25" color="crimson" material="" geometry="">
+      <a-sphere class="eye1" position="-0.41699 0.76032 0.87866" radius="1.25" color="white" material="" geometry="radius: 0.15; segmentsHeight: 19" scale="">
+        <a-sphere class="eye2" position="0 0 0.07" radius="1.25" color="black" material="" geometry="radius: 0.09; segmentsHeight: 19" scale="">
+        </a-sphere>
+  
+      </a-sphere>
+      <a-sphere class="eye1" position="0.41699 0.76032 0.87866" radius="1.25" color="white" material="" geometry="radius: 0.15; segmentsHeight: 19" scale="">
+        <a-sphere class="eye2" position="0 0 0.07" radius="1.25" color="black" material="" geometry="radius: 0.09; segmentsHeight: 19" scale="">
+        </a-sphere>
+      </a-sphere>
+  
 
-    <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E" material="" geometry=""></a-sphere>
+      <a-box position="0.03072 0.96589 0.01637" rotation="0 45 0" color="#4CC3D9" material="color: #d9584a" geometry="primitive: cone; openEnded: true"></a-box>
+
+
+      <a-cylinder position="0.021 -0.23314 1.16683" radius="0.5" height="1.5" color="#FFC65D" material="color: #08ddc5; side: double" geometry="radius: 0.62; height: 0; segmentsHeight: 36; thetaLength: 270" rotation="14.999999999999998 45 14.999999999999998" scale=""></a-cylinder>
+
+
+    </a-sphere>
+
+
+<!-- actual boss -->
+<a-sphere class="boss" position="7.25821 3.7042 5" radius="1.25" color="crimson" material="" geometry="" rotation="0 78 0">
+  <a-sphere class="eye1" position="-0.41699 0.76032 0.87866" radius="1.25" color="white" material="" geometry="radius: 0.15; segmentsHeight: 19" scale="">
+    <a-sphere class="eye2" position="0 0 0.07" radius="1.25" color="black" material="" geometry="radius: 0.09; segmentsHeight: 19" scale="">
+    </a-sphere>
+
+  </a-sphere>
+  <a-sphere class="eye1" position="0.41699 0.76032 0.87866" radius="1.25" color="white" material="" geometry="radius: 0.15; segmentsHeight: 19" scale="">
+    <a-sphere class="eye2" position="0 0 0.07" radius="1.25" color="black" material="" geometry="radius: 0.09; segmentsHeight: 19" scale="">
+    </a-sphere>
+  </a-sphere>
+
+
+  <a-box position="0.03072 0.96589 0.01637" rotation="0 45 0" color="#4CC3D9" material="color: #d9584a" geometry="primitive: cone; openEnded: true"></a-box>
+
+
+  <a-cylinder position="0 0 1" radius="0.5" height="1.5" color="#FFC65D" material="color: #08ddc5; side: double" geometry="radius: 0.62; height: 0.04; segmentsHeight: 36" rotation="29.999999999999996 0 0" scale=""></a-cylinder>
+
+
+</a-sphere>
+
+
+
+
+
+    <a-box position="0.08506 2.186 -4.95607" rotation="0 45 0" color="#4CC3D9" material="color: #d9584a" geometry="primitive: cone; openEnded: true"></a-box>
+
+
     <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" material="" geometry=""></a-cylinder>
     <a-plane src="#floor_grid" position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"
       material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="" id="" scale="20 20 1"></a-plane>
+
 
     <a-entity camera="" position="27.98897 1.6 -34.22068" wasd-controls="" rotation="0.67992 140.66820000000001 0"
       look-controls="" aframe-injected="" data-aframe-inspector-original-camera=""></a-entity>
