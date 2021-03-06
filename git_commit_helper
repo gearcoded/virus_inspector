@@ -1,0 +1,3 @@
+git add .
+git commit -m "Added basic physics for objects. Added a custom logic to let the player jump. Added the text file helper to commit the changes"
+git push origin master

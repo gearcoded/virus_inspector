@@ -2,7 +2,20 @@
 
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <!-- <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-extras.ocean@%5E3.5.x/dist/aframe-extras.ocean.min.js"></script>
+  <script src="https://unpkg.com/aframe-gradient-sky@1.2.0/dist/gradientsky.min.js"></script>
+  <script src="https://mixedreality.mozilla.org/ammo.js/builds/ammo.wasm.js"></script> -->
+  <script src="./physics-fix.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/gh/gearcoded/aframe-physics-system/dist/aframe-physics-system.js"></script> -->
+
+  <!-- <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script> -->
+  <!-- <script src="https://rawgit.com/rdub80/aframe-gui/master/dist/aframe-gui.min.js"></script>  -->
+  <!-- <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script> Environment extension --> -->
+
+
   <script>
+
     function getRandomColor() {
       var letters = '0123456789ABCDEF';
       var color = '#';
@@ -22,6 +35,76 @@
       return text;
     }
 
+    var jump = false;
+    var fall_down = false;
+    document.addEventListener('keydown', function (e) {
+      var player = document.querySelector('#player')
+      console.log(e)
+
+      var key = e.code;
+      if (key == "Space"){
+        if (fall_down) return
+        jump = true;
+        setTimeout(function(){
+          jump = false;
+          fall_down = true
+        },300)
+        var position = player.getAttribute('position');
+        position.y += 0.2;
+        console.log(position.y)
+        player.setAttribute('position', position);
+      }
+})
+
+document.addEventListener('keyup', function (e) {
+      jump = false;
+      fall_down = false
+})
+
+
+
+    AFRAME.registerComponent('player', {
+        init: function() {
+          console.log("reg",this.el)
+          this.el.addEventListener('physicscollided', function(e) {
+            console.log('Player has collided with ', e.detail.body.el);
+            e.detail.target.el; // Original entity (playerEl).
+            e.detail.body.el; // Other entity, which playerEl touched.
+            e.detail.contact; // Stats about the collision (CANNON.ContactEquation).
+            e.detail.contact.ni; // Normal (direction) of the collision (CANNON.Vec3).
+          });
+          // this.el.addEventListener('keydown', function(e) {
+          //   console.log('key ', e);
+          // });
+          // document.querySelector('#player').addEventListener('keydown', function(e) {
+          //   console.log('key ', e);
+          // });
+        },
+        tick: function () {
+          var player = document.querySelector('#player')
+          var position = player.getAttribute('position');
+
+          if (jump){
+            position.y += 0.2;
+
+          }
+
+          if (position.y > 1.6 && !jump){
+            position.y -= 0.35
+            // position.y += position.y *3;
+            console.log("fall down",position.y)
+          }
+          if (position.y < 1.6 && !jump){
+            position.y = 1.6
+            // position.y += position.y *3;
+          }
+        
+        console.log(position.y)
+        player.setAttribute('position', position);
+
+        }
+      })
+
 
 
 
@@ -39,6 +122,8 @@
 
           // el.setAttribute('font', "DejaVuSans-msdf.json");
         }
+
+
 
         //console.log("init")
       },
@@ -105,7 +190,7 @@
 
 <body>
 
-  <a-scene inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
+  <a-scene physics="debug: true; gravity: -9.8; driver: worker; workerFps: 60;" inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
     <a-assets>
       <img id="floor_grid" src="img/grid_hex.jpg">
     </a-assets>
@@ -116,6 +201,7 @@
     color="#33C3F0"
     negate="false">
 </a-text>
+
     <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9" material="" geometry=""></a-box>
 
     <a-entity id="overbuffs1" visible="">
@@ -150,7 +236,7 @@
         opacity="0.7" color="#4CC3D9" material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
       <a-box position="30.93968 1.4 -34.97477" rotation="-0.04984732817638162 -23.27526451159943 0.19996227050065732"
         opacity="0.7" color="#4CC3D9" material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
-      <a-box position="29.62395 1.4 -38" rotation="-0.05 -2.1 0.2" opacity="0.7" color="#4CC3D9"
+      <a-box dynamic-body position="29.62395 5.4 -38" rotation="-0.05 -2.1 0.2" opacity="0.7" color="#4CC3D9"
         material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
       <a-box position="31.22915 1.4 -38" rotation="-0.05 -2.1 0.2" opacity="0.7" color="#4CC3D9"
         material="color: #8cdae8" geometry="" scale="0.30015 3.344 1.90779"></a-box>
@@ -441,14 +527,25 @@
 
 
     <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D" material="" geometry=""></a-cylinder>
-    <a-plane src="#floor_grid" position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"
-      material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="" id="" scale="20 20 1"></a-plane>
 
 
-    <a-entity camera="" position="27.98897 1.6 -34.22068" wasd-controls="" rotation="0.67992 140.66820000000001 0"
-      look-controls="" aframe-injected="" data-aframe-inspector-original-camera=""></a-entity>
+    
+    <!-- <a-plane class='ground' static-body src="#floor_grid" position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"
+      material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="" id="" scale="20 20 1"></a-plane> -->
+      <a-plane class='ground' static-body src="#floor_grid" position="0 0 -4" rotation="0 0 0" width="4" height="4" color="#7BC8A4"
+      material="color: #8eb4aa; shader: flat; repeat: 20 20" geometry="primitive: box" id="" scale="20 0.01 80"></a-plane>
 
+    <a-entity sphere-collider kinematic-body camera="" player id="player" position="27.98897 1.6 -34.22068" wasd-controls="" rotation="0.67992 140.66820000000001 0"
+      look-controls="" aframe-injected="" data-aframe-inspector-original-camera="">
+    </a-entity>
 
+    <!-- <a-entity id="rig" movement-controls kinematic-body look-controls="" wasd-controls="" position="27.98897 1.6 -34.22068" rotation="0.67992 140.66820000000001 0">
+      <a-entity id="camera" camera position="0 1.6 0">
+      </a-entity> -->
+      <!-- <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="lime" material="" geometry=""></a-cylinder> -->
+
+  </a-entity>
+  
     <a-entity id="fans" position="0 0 -80" text_animation></a-entity>
 
 
