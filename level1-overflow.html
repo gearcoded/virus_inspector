@@ -193,6 +193,7 @@ document.addEventListener('keyup', function (e) {
   <a-scene physics="debug: true; gravity: -9.8; driver: worker; workerFps: 60;" inspector="" keyboard-shortcuts="" screenshot="" vr-mode-ui="" device-orientation-permission-ui="">
     <a-assets>
       <img id="floor_grid" src="img/grid_hex.jpg">
+      <audio id="level1_bg" src="snd/electric-threat.mp3"></audio>
     </a-assets>
 
     <a-sky color="#cfe6e8"></a-sky>
@@ -545,6 +546,7 @@ document.addEventListener('keyup', function (e) {
       <!-- <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="lime" material="" geometry=""></a-cylinder> -->
 
   </a-entity>
+  <a-entity id="music" position="0 0 -80" sound="src: #level1_bg; positional: false; autoplay: true; loop: true;"></a-entity>
   
     <a-entity id="fans" position="0 0 -80" text_animation></a-entity>
 
