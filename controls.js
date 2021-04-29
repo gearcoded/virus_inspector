@@ -1,3 +1,4 @@
+
 params = params || {};
 
 
@@ -197,9 +198,21 @@ AFRAME.registerComponent('player', {
     //movement via gamepad
     var direction = new THREE.Vector3();
     this.el.sceneEl.camera.getWorldDirection(direction);
-    direction.multiplyScalar(0.1)
-    position.add(direction)
-    
+    console.log(direction, position)
+
+    if (forward) {
+      direction.multiplyScalar(forward)
+      position.add(direction)
+    }
+    if (backward) {
+      direction.multiplyScalar(backward)
+      position.add(direction)
+    }
+    if (backward) {
+      direction.multiplyScalar(backward)
+      position.add(direction)
+    }
+    // position.add(direction)
     // console.log(position.y)
     player.setAttribute('position', position);
 
@@ -221,16 +234,19 @@ function gamepadState(){
     });
 
     gamepadPressed = [];
+    forward = 0;
 
     ga.forEach(function(value, index){
       if (!!value) {
         console.log("Axes: ", index)
+        // alert("Axes: "+ index)
         gamepadPressed.push("axes" + index);
       }
     })
     gb.forEach(function(value, index){
       if (!!value) {
         console.log("Button: ", index)
+        // alert("Button: "+ index)
         gamepadPressed.push("button" + index);
       }
       controlGamepad ("button" + index,value)
@@ -244,8 +260,10 @@ function gamepadState(){
 }
 
 function controlGamepad (el,value){
+  // console.log(el,value)
     switch (el) {
       case "button0":
+      case "button7":
         if (value){
           jump();
         }
@@ -253,11 +271,45 @@ function controlGamepad (el,value){
           stopJumping()
         }
         break;
-    
+      case "button12":
+        if (value) {
+          forward = 0.2;
+        }
+        else {
+          forward = 0;
+        }
+        break;
+      case "button13":
+        if (value) {
+          backward = -0.2;
+        }
+        else {
+          backward = 0;
+        }
+        break;
+      case "button14":
+        if (value) {
+          left = -0.2;
+        }
+        else {
+          left = 0;
+        }
+        break;
+      case "button15":
+        if (value) {
+          right = -0.2;
+        }
+        else {
+          right = 0;
+        }
+        break;
+
+
       default:
+        // forward = 0
         break;
     }
-  window.requestAnimationFrame(controlGamepad)
+  // window.requestAnimationFrame(controlGamepad)
 }
 
 
@@ -277,6 +329,10 @@ function simulateKeyPress(code) {
   }
 }
 
+var forward = 0;
+var backward = 0;
+var left = 0;
+var right = 0;
 
 window.requestAnimationFrame(gamepadState)
 // window.requestAnimationFrame(controlGamepad)
