@@ -115,8 +115,27 @@ AFRAME.registerComponent('text_animation', {
 
 // Physics
 
-var jump = false;
+var jumpHappens = false;
 var fall_down = false;
+
+function jump(){
+  if (fall_down) return
+  jumpHappens = true;
+  setTimeout(function () {
+    jumpHappens = false;
+    fall_down = true
+  }, 300)
+  var position = player.getAttribute('position');
+  position.y += 0.2;
+  // console.log(position.y)
+  player.setAttribute('position', position);
+}
+
+function stopJumping(){
+  jumpHappens = false;
+  fall_down = false
+}
+
 document.addEventListener('keydown', function (e) {
   var player = document.querySelector('#player')
   console.log(e)
@@ -125,22 +144,16 @@ document.addEventListener('keydown', function (e) {
   // alert("Key:'"+e.keyCode+"'")
   // alert("Keys:'"+JSON.stringify(navigator.getGamepads() )+"'")
   if (key == "Space") {
-    if (fall_down) return
-    jump = true;
-    setTimeout(function () {
-      jump = false;
-      fall_down = true
-    }, 300)
-    var position = player.getAttribute('position');
-    position.y += 0.2;
-    // console.log(position.y)
-    player.setAttribute('position', position);
+    console.log(44)
+    jump()
   }
 })
 
 document.addEventListener('keyup', function (e) {
-  jump = false;
-  fall_down = false
+  if (e.code == "Space") {
+    stopJumping()
+  }
+
 })
 
 
@@ -166,21 +179,27 @@ AFRAME.registerComponent('player', {
     var player = document.querySelector('#player')
     var position = player.getAttribute('position');
 
-    if (jump) {
+    if (jumpHappens) {
       position.y += 0.2;
 
     }
 
-    if (position.y > 1.6 && !jump) {
+    if (position.y > 1.6 && !jumpHappens) {
       position.y -= 0.35
       // position.y += position.y *3;
       console.log("fall down", position.y)
     }
-    if (position.y < 1.6 && !jump) {
+    if (position.y < 1.6 && !jumpHappens) {
       position.y = 1.6
       // position.y += position.y *3;
     }
 
+    //movement via gamepad
+    var direction = new THREE.Vector3();
+    this.el.sceneEl.camera.getWorldDirection(direction);
+    direction.multiplyScalar(0.1)
+    position.add(direction)
+    
     // console.log(position.y)
     player.setAttribute('position', position);
 
@@ -188,7 +207,78 @@ AFRAME.registerComponent('player', {
 })
 
 
+var gamepadPressed = [];
+// gamepad control
+function gamepadState(){
+  var gamepads = navigator.getGamepads();
+  var gamepad = gamepads[0];
+  if (gamepad){
+    var ga = gamepad.axes.map(function(value){
+      return parseInt(value)
+    });
+    var gb = gamepad.buttons.map(function(value){
+      return value.pressed;
+    });
+
+    gamepadPressed = [];
+
+    ga.forEach(function(value, index){
+      if (!!value) {
+        console.log("Axes: ", index)
+        gamepadPressed.push("axes" + index);
+      }
+    })
+    gb.forEach(function(value, index){
+      if (!!value) {
+        console.log("Button: ", index)
+        gamepadPressed.push("button" + index);
+      }
+      controlGamepad ("button" + index,value)
+
+    })
+
+    controlGamepad
+  }
+
+  window.requestAnimationFrame(gamepadState)
+}
+
+function controlGamepad (el,value){
+    switch (el) {
+      case "button0":
+        if (value){
+          jump();
+        }
+        else {
+          stopJumping()
+        }
+        break;
+    
+      default:
+        break;
+    }
+  window.requestAnimationFrame(controlGamepad)
+}
 
 
+function simulateKeyPress(code) {
+  var evt = document.createEvent("KeyboardEvent");
+  evt.initKeyboardEvent("keypress", true, true, window,
+                    0, 0, 0, 0,
+                    0, "e".charCodeAt(code))
+  var body = document.body;
+  var canceled = !body.dispatchEvent(evt);
+  if(canceled) {
+    console.log("canceled");
+    // A handler called preventDefault
+  } else {
+    console.log("ok");
+    // None of the handlers called preventDefault
+  }
+}
+
+
+window.requestAnimationFrame(gamepadState)
+// window.requestAnimationFrame(controlGamepad)
 
 
