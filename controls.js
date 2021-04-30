@@ -144,14 +144,14 @@ document.addEventListener('keydown', function (e) {
   var key = e.code;
   // alert("Key:'"+e.keyCode+"'")
   // alert("Keys:'"+JSON.stringify(navigator.getGamepads() )+"'")
-  if (key == "Space") {
+  if (key == "Space" || e.keyCode == 13) {
     console.log(44)
     jump()
   }
 })
 
 document.addEventListener('keyup', function (e) {
-  if (e.code == "Space") {
+  if (e.code == "Space" || e.keyCode == 13) {
     stopJumping()
   }
 
@@ -198,7 +198,7 @@ AFRAME.registerComponent('player', {
     //movement via gamepad
     var direction = new THREE.Vector3();
     this.el.sceneEl.camera.getWorldDirection(direction);
-    console.log(direction, position)
+    // console.log(direction, position)
 
     if (forward) {
       direction.multiplyScalar(forward)
@@ -238,14 +238,14 @@ function gamepadState(){
 
     ga.forEach(function(value, index){
       if (!!value) {
-        console.log("Axes: ", index)
+        // console.log("Axes: ", index)
         // alert("Axes: "+ index)
         gamepadPressed.push("axes" + index);
       }
     })
     gb.forEach(function(value, index){
       if (!!value) {
-        console.log("Button: ", index)
+        // console.log("Button: ", index)
         // alert("Button: "+ index)
         gamepadPressed.push("button" + index);
       }
@@ -255,6 +255,8 @@ function gamepadState(){
 
     controlGamepad
   }
+
+  // setTimeout(gamepadState,0)
 
   window.requestAnimationFrame(gamepadState)
 }
@@ -334,6 +336,7 @@ var backward = 0;
 var left = 0;
 var right = 0;
 
+// setTimeout(gamepadState,20)
 window.requestAnimationFrame(gamepadState)
 // window.requestAnimationFrame(controlGamepad)
 

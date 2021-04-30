@@ -1,3 +1,3 @@
 git add .
-git commit -m "Added forward and backward moving via gamepad buttons."
+git commit -m "Added the params variable to the level1 file."
 git push origin master

@@ -64,8 +64,14 @@ navigator.xr.addEventListener('sessiongranted', function (evt) {
 })
 
 function open_link(link){
-  if (link == 'level1' && prompt(`Open ${link}?`)){
-    window.location.href='level1-overflow.html'
+  if (link == 'level1'){
+    var answer = prompt(`Open ${link}?`)
+    if (answer == 1){
+      window.location.href='level1-overflow.html'
+    }
+    if (answer == 2){
+      window.location.href='level2-xless.html'
+    }
   }
   
 }
